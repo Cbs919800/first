@@ -22,14 +22,12 @@ const widthFactor = 1.2; // Width factor for the triangle
 
 let pegRadius, ballRadius, pegSpacing, slotHeight, gameWidth, gameHeight, scale, gameLeft, gameTop;
 
-// Sound effects
-const scoreSound10x = new Audio('assets/sounds/pickupCoin.wav');
-const scoreSound100x = new Audio('assets/sounds/pickupCoin.wav');
-
+// function to start screen shake effect
 function startScreenShake(duration) {
     shakeDuration = duration;
 }
 
+// function to apply the screen shake effect
 function applyScreenShake() {
     if (shakeDuration > 0) {
         const shakeX = (Math.random() - 0.5) * shakeMagnitude;
@@ -41,6 +39,7 @@ function applyScreenShake() {
     }
 }
 
+// function to handle canvas resizing
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -58,9 +57,11 @@ function resizeCanvas() {
     gameTop = (canvas.height - gameHeight) / 2;
 }
 
+// resizing event listener
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
+// function to draw the pegs
 function drawPegs() {
     ctx.fillStyle = '#fff';
     for (let row = 0; row < pegRows; row++) {
@@ -75,6 +76,7 @@ function drawPegs() {
     }
 }
 
+// function to draw the walls
 function drawWalls() {
     ctx.fillStyle = '#fff';
     const wallMargin = 45;
@@ -83,6 +85,7 @@ function drawWalls() {
     ctx.fillRect(gameLeft + gameWidth - wallWidth - wallMargin, gameTop, wallWidth, gameHeight);
 }
 
+// function to draw the slots
 function drawSlots() {
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
@@ -116,6 +119,7 @@ function drawSlots() {
     }
 }
 
+// function to draw the balls
 function drawBalls() {
     ctx.fillStyle = '#fff';
     for (let ball of balls) {
@@ -126,14 +130,13 @@ function drawBalls() {
     }
 }
 
+// function to update the ball positions
 function updateBalls() {
     for (let i = balls.length - 1; i >= 0; i--) {
         let ball = balls[i];
         ball.y += ball.vy;
         ball.vy += 0.2 * scale / 200;
         
-
-
         for (let row = 0; row < pegRows; row++) {
             for (let col = 0; col <= row; col++) {
                 const pegX = gameLeft + (pegColumns - row) * scale / 2 * widthFactor + col * scale * widthFactor;
@@ -198,80 +201,22 @@ function updateBalls() {
 
             if (slotIndex >= 0 && slotIndex < multipliers.length) {
                 pendingScore += multipliers[slotIndex] * ball.value;
-                if (multipliers[slotIndex] === 10) {
-                    createParticles(ball.x, ball.y);
-                    scoreSound10x.play().catch(e => console.error("Error playing 10x sound:", e));
-                } else if (multipliers[slotIndex] === 100) {
-                    createParticles(ball.x, ball.y);
-                    scoreSound100x.play().catch(e => console.error("Error playing 100x sound:", e));
-                    startScreenShake(10);
-                }
+                // Commented out sound playing:
+                // if (multipliers[slotIndex] === 10) {
+                //     createParticles(ball.x, ball.y);
+                // }
             }
             balls.splice(i, 1);
         }
     }
-
-    if (balls.length === 0 && pendingScore > 0) {
-        score += pendingScore;
-        pendingScore = 0;
-        updateScore();
-    }
 }
 
-
-function gameLoop() {
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    drawPegs();
-    drawSlots();
-    drawWalls();
-    drawBalls();
-    updateBalls();
-    updateParticles();
-    drawParticles(ctx);
-    ctx.fillStyle = '#fff';
-    ctx.font = `${scale / 3}px Arial`;
-    ctx.textAlign = 'left';
-    ctx.fillText(`Ball Value: ${ballValue.toFixed(2)}`, gameLeft - 400, gameTop - scale / 2 + 230);
-    ctx.fillText(`Ball Count: ${ballCount}/${maxAffordableBalls}`, gameLeft - 400, gameTop - scale + 230);
-    applyScreenShake();
-    requestAnimationFrame(gameLoop);
-}
-
+// function to update the score
 function updateScore() {
-    score = Math.max(0, score);
-    scoreElement.textContent = `Score: ${score.toFixed(2)}`;
-    updateMaxAffordableBalls();
+    scoreElement.textContent = `Score: ${Math.floor(score)} - Balls Left: ${maxAffordableBalls}`;
 }
 
-function updateMaxAffordableBalls() {
-    maxAffordableBalls = Math.floor(score / ballValue);
-    maxAffordableBalls = Math.max(0, maxAffordableBalls);
-    ballCountInput.max = maxAffordableBalls;
-    if (ballCount > maxAffordableBalls) {
-        ballCount = maxAffordableBalls;
-        ballCountInput.value = ballCount;
-    }
-}
-
-function setBallValue() {
-    let newValue = parseFloat(ballValueInput.value) || 0;
-    newValue = Math.max(0.01, Math.min(newValue, score / 2));
-    ballValue = newValue;
-    ballValueInput.value = ballValue.toFixed(2);
-    updateMaxAffordableBalls();
-}
-
-function setBallCount() {
-    let newCount = parseInt(ballCountInput.value) || 0;
-    if (newCount > maxAffordableBalls) {
-        newCount = maxAffordableBalls;
-        alert("You cannot afford that many balls! Adjusting to max affordable.");
-    }
-    ballCount = Math.max(0, Math.min(newCount, maxAffordableBalls));
-    ballCountInput.value = ballCount;
-}
-
+// function to handle dropping balls
 dropButton.addEventListener('click', () => {
     const totalCost = ballValue * ballCount;
     if (ballCount > 0 && totalCost <= score) {
@@ -295,18 +240,23 @@ dropButton.addEventListener('click', () => {
     }
 });
 
-ballValueInput.addEventListener('input', () => {
-    let inputValue = parseFloat(ballValueInput.value) || 0.01;
-    inputValue = Math.max(0.01, Math.min(inputValue, score / 2));
-    ballValueInput.value = inputValue.toFixed(2);
-    setBallValue();
-});
+// function to update frame-by-frame
+function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawPegs();
+    drawWalls();
+    drawSlots();
+    drawBalls();
+    updateBalls();
+    applyScreenShake();
 
-ballCountInput.addEventListener('input', () => {
-    let inputValue = parseInt(ballCountInput.value) || 0;
-    inputValue = Math.max(0, Math.min(inputValue, maxAffordableBalls));
-    setBallCount();
-});
+    score += pendingScore;
+    pendingScore = 0;
 
-updateMaxAffordableBalls();
-gameLoop();
+    updateScore();
+    requestAnimationFrame(update);
+}
+
+// Initial update call to start the game loop
+update();
+
