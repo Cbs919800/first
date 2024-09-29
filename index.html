@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plinko Game</title>
+    <link rel="stylesheet" href="Style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="plinkoCanvas"></canvas>
+        <button id="dropButton">Drop Balls</button>
+        <div id="score">Score: 1000</div>
+        <div id="ball-controls-container">
+            <div class="input-group">
+                <input type="number" id="ballValueInput" min="0" step="0.01" value="1" placeholder="Ball value">
+                <label for="ballValueInput">Ball Value</label>
+            </div>
+            <div class="input-group">
+                <input type="number" id="ballCountInput" min="1" value="1" placeholder="Ball count">
+                <label for="ballCountInput">Ball Count</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include the particles script -->
+    <script src="particles.js"></script> 
+    <!-- Include the main game logic script -->
+    <script src="setup.js"></script> 
+
+    <!-- Preload sounds -->
+    <script>
+        const scoreSound10x = new Audio('C:\\Users\\Christian\\Downloads\\pickupCoin.wav')
+        const scoreSound100x = new Audio('C:\\Users\\Christian\\Downloads\\pickupCoin.wav')
+    </script>
+</body>
+</html>
