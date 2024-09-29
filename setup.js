@@ -23,8 +23,8 @@ const widthFactor = 1.2; // Width factor for the triangle
 let pegRadius, ballRadius, pegSpacing, slotHeight, gameWidth, gameHeight, scale, gameLeft, gameTop;
 
 // Sound effects
-const scoreSound10x = new Audio('C:\\Users\\Christian\\Downloads\\pickupCoin.wav')
-const scoreSound100x = new Audio('C:\\Users\\Christian\\Downloads\\pickupCoin.wav')
+const scoreSound10x = new Audio('assets/sounds/pickupCoin.wav');
+const scoreSound100x = new Audio('assets/sounds/pickupCoin.wav');
 
 function startScreenShake(duration) {
     shakeDuration = duration;
